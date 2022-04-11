@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setTitle("Title")
                 .setMessage("Hello, This is message")
-                .create()
                 .show()
         }
     }
@@ -39,7 +38,6 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("ok") { _, _ -> Log.d("hy", "positive") }
                 .setNegativeButton("cancel") { _, _ -> Log.d("hy", "negative") }
                 .setNeutralButton("neutral") { _, _ -> Log.d("hy", "neutral") }
-                .create()
                 .show()
         }
     }
