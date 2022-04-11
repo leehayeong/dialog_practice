@@ -10,16 +10,43 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="20dp"
         tools:context=".MainActivity">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/alertDialog"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            android:text="ALERT DIALOG"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/alertButtonDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ALERT BUTTON DIALOG"
+            app:layout_constraintTop_toBottomOf="@id/alertDialog" />
+
+        <Button
+            android:id="@+id/alertListDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ALERT LIST DIALOG"
+            app:layout_constraintTop_toBottomOf="@id/alertButtonDialog" />
+
+        <Button
+            android:id="@+id/alertCheckBoxDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ALERT CHECK BOX DIALOG"
+            app:layout_constraintTop_toBottomOf="@id/alertListDialog" />
+
+        <Button
+            android:id="@+id/alertRadioButtonDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ALERT RADIO BUTTON DIALOG"
+            app:layout_constraintTop_toBottomOf="@id/alertCheckBoxDialog" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
