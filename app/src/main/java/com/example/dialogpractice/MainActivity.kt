@@ -2,9 +2,13 @@ package com.example.dialogpractice
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
 import com.example.dialogpractice.databinding.ActivityMainBinding
+import com.example.dialogpractice.databinding.DialogCommonBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -19,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         setAlertListDialog()
         setAlertCheckBoxDialog()
         setRadioButtonDialog()
+        setCustomViewAlertDialog()
     }
 
     private fun setAlertDialog() {
@@ -82,6 +87,44 @@ class MainActivity : AppCompatActivity() {
                     Log.d("hy", "checkedItemPosition: $checkedItemPosition")
                 }
                 .show()
+        }
+    }
+
+    private fun setCustomViewAlertDialog() {
+//        val layoutInflater = LayoutInflater.from(this)
+//        val view = layoutInflater.inflate(R.layout.dialog_common, null)
+//
+//        val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog)
+//            .setView(view)
+//            .create()
+//
+//        val message = view.findViewById<TextView>(R.id.message)
+//        val negativeButton = view.findViewById<AppCompatButton>(R.id.negativeButton)
+//        val positiveButton = view.findViewById<AppCompatButton>(R.id.positiveButton)
+
+        // dataBinding 사용
+        val dialogBinding = DialogCommonBinding.inflate(layoutInflater)
+        val dialogView = dialogBinding.root
+
+        // 다이얼로그 create
+        val alertDialog = AlertDialog.Builder(this, R.style.CustomAlertDialog)
+            .setView(dialogView)
+            .create()
+
+        // create 후에 버튼 이벤트 바인딩
+        dialogBinding.negativeButton.setOnClickListener {
+            Log.d("hy", "아니오 click")
+            alertDialog.dismiss()
+        }
+
+        dialogBinding.positiveButton.setOnClickListener {
+            Log.d("hy", "예 click")
+            alertDialog.dismiss()
+        }
+
+        // 다이얼로그 show
+        binding.customAlertDialog.setOnClickListener {
+            alertDialog.show()
         }
     }
 }
