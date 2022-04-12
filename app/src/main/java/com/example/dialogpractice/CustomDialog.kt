@@ -1,6 +1,7 @@
 package com.example.dialogpractice
 
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,32 +16,17 @@ import com.example.dialogpractice.databinding.DialogCommonBinding
  *  Copyright © 2022 Shinhan Bank. All rights reserved.
  */
 
-enum class DialogType {
-    ALERT, CONFIRM
-}
-
 class CustomDialog : DialogFragment() {
 
     private var _binding: DialogCommonBinding? = null
     private val binding get() = _binding!!
 
-    // 다이얼로그 타입 설정
-    // 1. 아니오 버튼이 있을 경우에만 CONFIRM 형태의 다이얼로그
-    // 2. 아니오 버튼이 없으면 확인 버튼만 있는 CONFIRM 형태의 다이얼로그
-    private val type: DialogType
-        get() = if (negativeButton == null) DialogType.ALERT else DialogType.CONFIRM
-
-    private var title: String? = null
-    private var message: String? = null
-
-    private var positiveButton: Pair<String?, CustomDialogListener?>? = null
-    private var negativeButton: Pair<String?, CustomDialogListener?>? = null
-
-    private var defaultDismissListener: CustomDialogListener = object : CustomDialogListener {
-        override fun onClick(dialog: CustomDialog) {
-            dialog.dismiss()
-        }
-    }
+    private var model = DialogModel(
+        title = null,
+        message = null,
+        positiveButton = null,
+        negativeButton = null,
+    )
 
     /**
      * 화면회전 시 builder 를 통해 저장되었던 값들(텍스트, 리스너 등)은 사라지므로 savedInstanceState 에서 복원해야 함
@@ -60,23 +46,11 @@ class CustomDialog : DialogFragment() {
     ): View {
         _binding = DialogCommonBinding.inflate(LayoutInflater.from(context))
 
-        binding.type = type
-        binding.message.text = message
-
-        binding.positiveButton.apply {
-            val buttonText = positiveButton?.first ?: "확인"
-            val buttonListener = positiveButton?.second ?: defaultDismissListener
-
-            text = buttonText
-            setOnClickListener { buttonListener.onClick(this@CustomDialog) }
-        }
-
-        binding.negativeButton.apply {
-            val buttonText = negativeButton?.first ?: "취소"
-            val buttonListener = negativeButton?.second ?: defaultDismissListener
-
-            text = buttonText
-            setOnClickListener { buttonListener.onClick(this@CustomDialog) }
+        binding.apply {
+            dialogModel = model
+            message.movementMethod = ScrollingMovementMethod()
+            positiveButton.setOnClickListener { model.positiveButton?.second?.onClick(this@CustomDialog) }
+            negativeButton.setOnClickListener { model.negativeButton?.second?.onClick(this@CustomDialog) }
         }
 
         return binding.root
@@ -113,13 +87,10 @@ class CustomDialog : DialogFragment() {
     /**
      * 화면 회전 시 builder 를 통해 받은 값들 저장
      */
-    // TODO(java.lang.RuntimeException: Parcelable encountered IOException writing serializable object (name = kotlin.Pair))
+    // TODO(Parcelable encountered IOException writing serializable object (name = kotlin.Pair))
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(KEY_TITLE, title)
-        outState.putSerializable(KEY_MESSAGE, message)
-        outState.putSerializable(KEY_POSITIVE_BUTTON, positiveButton)
-        outState.putSerializable(KEY_NEGATIVE_BUTTON, negativeButton)
+        outState.putParcelable(KEY_MODEL, model)
     }
 
     /**
@@ -134,12 +105,7 @@ class CustomDialog : DialogFragment() {
      * 화면 회전 시 저장된 값 복구
      */
     private fun getSavedInstanceView(savedInstanceState: Bundle) {
-        title = savedInstanceState.getString(KEY_TITLE)
-        message = savedInstanceState.getString(KEY_MESSAGE)
-        positiveButton =
-            savedInstanceState.getSerializable(KEY_POSITIVE_BUTTON) as? Pair<String?, CustomDialogListener?>?
-        negativeButton =
-            savedInstanceState.getSerializable(KEY_NEGATIVE_BUTTON) as? Pair<String?, CustomDialogListener?>?
+        model = savedInstanceState.getParcelable<DialogModel>(KEY_MODEL) as DialogModel
     }
 
     /**
@@ -149,22 +115,22 @@ class CustomDialog : DialogFragment() {
         private val dialog = CustomDialog()
 
         fun setTitle(title: String): Builder {
-            dialog.title = title
+            dialog.model.title = title
             return this
         }
 
         fun setMessage(message: String): Builder {
-            dialog.message = message
+            dialog.model.message = message
             return this
         }
 
         fun setPositiveButton(text: String, onClickListener: CustomDialogListener): Builder {
-            dialog.positiveButton = Pair(text, onClickListener)
+            dialog.model.positiveButton = Pair(text, onClickListener)
             return this
         }
 
         fun setNegativeButton(text: String, onClickListener: CustomDialogListener): Builder {
-            dialog.negativeButton = Pair(text, onClickListener)
+            dialog.model.negativeButton = Pair(text, onClickListener)
             return this
         }
 
@@ -180,9 +146,6 @@ class CustomDialog : DialogFragment() {
 
     companion object {
         val TAG: String = CustomDialog::class.java.simpleName
-        private const val KEY_TITLE = "TITLE"
-        private const val KEY_MESSAGE = "TITLE"
-        private const val KEY_POSITIVE_BUTTON = "POSITIVE_BUTTON"
-        private const val KEY_NEGATIVE_BUTTON = "NEGATIVE_BUTTON"
+        private const val KEY_MODEL = "KEY_MODEL"
     }
 }
