@@ -55,5 +55,19 @@
             android:text="CUSTOM ALERT DIALOG"
             app:layout_constraintTop_toBottomOf="@id/alertRadioButtonDialog" />
 
+        <Button
+            android:id="@+id/customClassConfirmDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CUSTOM CLASS CONFIRM DIALOG"
+            app:layout_constraintTop_toBottomOf="@id/customAlertDialog" />
+
+        <Button
+            android:id="@+id/customClassAlertDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CUSTOM CLASS ALERT DIALOG"
+            app:layout_constraintTop_toBottomOf="@id/customClassConfirmDialog" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

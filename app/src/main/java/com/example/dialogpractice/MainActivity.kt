@@ -2,11 +2,8 @@ package com.example.dialogpractice
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import com.example.dialogpractice.databinding.ActivityMainBinding
 import com.example.dialogpractice.databinding.DialogCommonBinding
 
@@ -24,6 +21,8 @@ class MainActivity : AppCompatActivity() {
         setAlertCheckBoxDialog()
         setRadioButtonDialog()
         setCustomViewAlertDialog()
+        setCustomClassConfirmDialog()
+        setCustomClassAlertDialog()
     }
 
     private fun setAlertDialog() {
@@ -125,6 +124,42 @@ class MainActivity : AppCompatActivity() {
         // 다이얼로그 show
         binding.customAlertDialog.setOnClickListener {
             alertDialog.show()
+        }
+    }
+
+    private fun setCustomClassConfirmDialog() {
+        binding.customClassConfirmDialog.setOnClickListener {
+            CustomDialog.Builder()
+                .setTitle("title")
+                .setMessage("장시간 이용이 없어 로그아웃 합니다.")
+                .setPositiveButton("예", object : CustomDialog.CustomDialogListener {
+                    override fun onClick(dialog: CustomDialog) {
+                        Log.d("hy", "예")
+                        dialog.dismiss()
+                    }
+                })
+                .show(supportFragmentManager)
+        }
+    }
+
+    private fun setCustomClassAlertDialog() {
+        binding.customClassAlertDialog.setOnClickListener {
+            CustomDialog.Builder()
+                .setTitle("title")
+                .setMessage("로그아웃 하시겠습니까?")
+                .setPositiveButton("예", object : CustomDialog.CustomDialogListener {
+                    override fun onClick(dialog: CustomDialog) {
+                        Log.d("hy", "예")
+                        dialog.dismiss()
+                    }
+                })
+                .setNegativeButton("아니오", object : CustomDialog.CustomDialogListener {
+                    override fun onClick(dialog: CustomDialog) {
+                        Log.d("hy", "아니오")
+                        dialog.dismiss()
+                    }
+                })
+                .show(supportFragmentManager)
         }
     }
 }
