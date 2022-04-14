@@ -52,6 +52,7 @@ class CustomDialog : DialogFragment() {
                 text = model.positiveBtnText
                 setOnClickListener {
                     model.positiveBtnClick?.onClick()?.invoke(this@CustomDialog)
+                    dismiss()
                 }
             }
         } else {
@@ -64,6 +65,7 @@ class CustomDialog : DialogFragment() {
                 text = model.negativeBtnText
                 setOnClickListener {
                     model.negativeBtnClick?.onClick()?.invoke(this@CustomDialog)
+                    dismiss()
                 }
             }
         } else {

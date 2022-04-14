@@ -145,11 +145,9 @@ class MainActivity : AppCompatActivity() {
                 .setMessage("로그아웃 하시겠습니까?")
                 .setPositiveButton("예") {
                     Log.d("hy", "예")
-                    it.dismiss()
                 }
                 .setNegativeButton("아니오") {
                     Log.d("hy", "아니오")
-                    it.dismiss()
                 }
                 .show(supportFragmentManager)
         }
