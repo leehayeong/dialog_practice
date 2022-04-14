@@ -1,12 +1,11 @@
 package com.example.dialogpractice
 
 import android.os.Bundle
-import android.os.Parcel
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dialogpractice.databinding.ActivityMainBinding
-import com.example.dialogpractice.databinding.DialogCommonBinding
+import com.example.dialogpractice.databinding.DialogCustomBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -103,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 //        val positiveButton = view.findViewById<AppCompatButton>(R.id.positiveButton)
 
         // dataBinding 사용
-        val dialogBinding = DialogCommonBinding.inflate(layoutInflater)
+        val dialogBinding = DialogCustomBinding.inflate(layoutInflater)
         val dialogView = dialogBinding.root
 
         // 다이얼로그 create
@@ -131,9 +130,8 @@ class MainActivity : AppCompatActivity() {
     private fun setCustomClassConfirmDialog() {
         binding.customClassConfirmDialog.setOnClickListener {
             CustomDialog.Builder()
-                .setTitle("title")
                 .setMessage("장시간 이용이 없어 로그아웃 합니다.")
-                .setPositiveButton {
+                .setPositiveButton("예") {
                     Log.d("hy", "예")
                     it.dismiss()
                 }
@@ -144,13 +142,12 @@ class MainActivity : AppCompatActivity() {
     private fun setCustomClassAlertDialog() {
         binding.customClassAlertDialog.setOnClickListener {
             CustomDialog.Builder()
-                .setTitle("title")
                 .setMessage("로그아웃 하시겠습니까?")
-                .setPositiveButton {
+                .setPositiveButton("예") {
                     Log.d("hy", "예")
                     it.dismiss()
                 }
-                .setNegativeButton {
+                .setNegativeButton("아니오") {
                     Log.d("hy", "아니오")
                     it.dismiss()
                 }
