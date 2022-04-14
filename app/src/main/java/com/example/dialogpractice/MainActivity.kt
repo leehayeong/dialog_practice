@@ -1,6 +1,7 @@
 package com.example.dialogpractice
 
 import android.os.Bundle
+import android.os.Parcel
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -132,12 +133,10 @@ class MainActivity : AppCompatActivity() {
             CustomDialog.Builder()
                 .setTitle("title")
                 .setMessage("장시간 이용이 없어 로그아웃 합니다.")
-                .setPositiveButton("예", object : CustomDialog.CustomDialogListener {
-                    override fun onClick(dialog: CustomDialog) {
-                        Log.d("hy", "예")
-                        dialog.dismiss()
-                    }
-                })
+                .setPositiveButton {
+                    Log.d("hy", "예")
+                    it.dismiss()
+                }
                 .show(supportFragmentManager)
         }
     }
@@ -147,18 +146,14 @@ class MainActivity : AppCompatActivity() {
             CustomDialog.Builder()
                 .setTitle("title")
                 .setMessage("로그아웃 하시겠습니까?")
-                .setPositiveButton("예", object : CustomDialog.CustomDialogListener {
-                    override fun onClick(dialog: CustomDialog) {
-                        Log.d("hy", "예")
-                        dialog.dismiss()
-                    }
-                })
-                .setNegativeButton("아니오", object : CustomDialog.CustomDialogListener {
-                    override fun onClick(dialog: CustomDialog) {
-                        Log.d("hy", "아니오")
-                        dialog.dismiss()
-                    }
-                })
+                .setPositiveButton {
+                    Log.d("hy", "예")
+                    it.dismiss()
+                }
+                .setNegativeButton {
+                    Log.d("hy", "아니오")
+                    it.dismiss()
+                }
                 .show(supportFragmentManager)
         }
     }

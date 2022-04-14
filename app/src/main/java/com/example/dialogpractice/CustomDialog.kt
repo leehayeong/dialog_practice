@@ -1,13 +1,14 @@
 package com.example.dialogpractice
 
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.example.dialogpractice.databinding.DialogCommonBinding
+import kotlinx.parcelize.Parcelize
 
 /**
  *  CommonDialogFragment.kt
@@ -31,14 +32,7 @@ class CustomDialog : DialogFragment() {
     /**
      * 화면회전 시 builder 를 통해 저장되었던 값들(텍스트, 리스너 등)은 사라지므로 savedInstanceState 에서 복원해야 함
      */
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (savedInstanceState != null) getSavedInstanceView(savedInstanceState)
-    }
 
-    /**
-     * 사용자가 dialog 의 디자인 및 클릭 리스너를 커스텀하고 싶을 때 onCreateView 에서 구현
-     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,36 +40,28 @@ class CustomDialog : DialogFragment() {
     ): View {
         _binding = DialogCommonBinding.inflate(LayoutInflater.from(context))
 
+        model.apply {
+            title = arguments?.getString("title") ?: "오잉"
+            message = arguments?.getString("message") ?: "오잉??"
+            positiveButton = arguments?.getParcelable<Listener>("titleListener")
+            negativeButton = arguments?.getParcelable<Listener>("messageListener")
+        }
+
         binding.apply {
-            dialogModel = model
-            message.movementMethod = ScrollingMovementMethod()
-            positiveButton.setOnClickListener { model.positiveButton?.second?.onClick(this@CustomDialog) }
-            negativeButton.setOnClickListener { model.negativeButton?.second?.onClick(this@CustomDialog) }
+            message.text = model.message
+            positiveButton.text = model.title
+            negativeButton.text = model.title
+            positiveButton.setOnClickListener { model.positiveButton?.onClick()?.invoke(this@CustomDialog) }
+            negativeButton.setOnClickListener { model.negativeButton?.onClick()?.invoke(this@CustomDialog) }
         }
 
         return binding.root
     }
 
-//    /**
-//     * onCreateDialog 는 dialogFragment 에 내장된 AlertDialog 를 생성하여 (디자인 커스텀 없이) 반환할 때 사용
-//     */
-//    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-//        _binding = DialogCommonBinding.inflate(LayoutInflater.from(context))
-//
-//        binding.message.text = message
-//        binding.positiveButton.setOnClickListener {
-//            positiveButtonListener?.onClick(this)
-//        }
-//        binding.negativeButton.setOnClickListener {
-//            negativeButtonListener?.onClick(this)
-//        }
-//
-//        return activity?.let {
-//            AlertDialog.Builder(requireActivity(), R.style.CustomAlertDialog)
-//                .setView(binding.root)
-//                .create()
-//        } ?: throw IllegalStateException("Activity cannot be null")
-//    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     /**
      * 다이얼로그 style 지정
@@ -85,67 +71,47 @@ class CustomDialog : DialogFragment() {
     }
 
     /**
-     * 화면 회전 시 builder 를 통해 받은 값들 저장
-     */
-    // TODO(Parcelable encountered IOException writing serializable object (name = kotlin.Pair))
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(KEY_MODEL, model)
-    }
-
-    /**
-     * view destroy 될 때 fragment binding 이므로 null 처리
-     */
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    /**
-     * 화면 회전 시 저장된 값 복구
-     */
-    private fun getSavedInstanceView(savedInstanceState: Bundle) {
-        model = savedInstanceState.getParcelable<DialogModel>(KEY_MODEL) as DialogModel
-    }
-
-    /**
      * Activity or Fragment 에서 CustomDialog 를 chaining 형태로 호출하여 사용할 수 있도록 Builder Pattern 사용
      */
     class Builder {
-        private val dialog = CustomDialog()
+        private val args: Bundle = Bundle()
 
         fun setTitle(title: String): Builder {
-            dialog.model.title = title
+            args.putString("title", title)
             return this
         }
 
         fun setMessage(message: String): Builder {
-            dialog.model.message = message
+            args.putString("message", message)
             return this
         }
 
-        fun setPositiveButton(text: String, onClickListener: CustomDialogListener): Builder {
-            dialog.model.positiveButton = Pair(text, onClickListener)
+        fun setPositiveButton(onClickListener: (CustomDialog) -> Unit): Builder {
+            args.putParcelable("titleListener", Listener(onClickListener))
             return this
         }
 
-        fun setNegativeButton(text: String, onClickListener: CustomDialogListener): Builder {
-            dialog.model.negativeButton = Pair(text, onClickListener)
+        fun setNegativeButton(onClickListener: (CustomDialog) -> Unit): Builder {
+            args.putParcelable("messageListener", Listener(onClickListener))
+
             return this
         }
 
         fun show(manager: FragmentManager): CustomDialog {
-            dialog.show(manager, TAG)
-            return dialog
+            val newCustomDialog = CustomDialog().apply {
+                arguments = args
+            }
+            newCustomDialog.show(manager, TAG)
+            return newCustomDialog
         }
     }
 
-    interface CustomDialogListener {
-        fun onClick(dialog: CustomDialog)
+    @Parcelize
+    class Listener(private val clickAction: (CustomDialog) -> Unit) : Parcelable {
+        fun onClick() = clickAction
     }
 
     companion object {
         val TAG: String = CustomDialog::class.java.simpleName
-        private const val KEY_MODEL = "KEY_MODEL"
     }
 }

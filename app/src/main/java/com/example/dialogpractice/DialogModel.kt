@@ -10,10 +10,9 @@ import kotlinx.parcelize.Parcelize
  *  Copyright © 2022 Shinhan Bank. All rights reserved.
  */
 
-@Parcelize
 data class DialogModel(
     var title: String? = null,
     var message: String? = null,
-    var positiveButton: Pair<String, CustomDialog.CustomDialogListener>? = null,
-    var negativeButton: Pair<String, CustomDialog.CustomDialogListener>? = null,
-) : Parcelable
+    var positiveButton: CustomDialog.Listener? = null,
+    var negativeButton: CustomDialog.Listener? = null,
+)
